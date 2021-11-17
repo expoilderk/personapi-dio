@@ -4,12 +4,14 @@ package com.expoilderk.dio.personapi.service;
 import com.expoilderk.dio.personapi.dto.request.PersonDTO;
 import com.expoilderk.dio.personapi.dto.response.MessageResponseDTO;
 import com.expoilderk.dio.personapi.entity.Person;
+import com.expoilderk.dio.personapi.exception.PersonNotFoundException;
 import com.expoilderk.dio.personapi.mapper.PersonMapper;
 import com.expoilderk.dio.personapi.repository.PersonRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -39,5 +41,12 @@ public class PersonService {
         return allPeople.stream()
                 .map(personMapper::toDTO)
                 .collect(Collectors.toList());
+    }
+
+    public PersonDTO findById(Long id) throws PersonNotFoundException {
+        Person person = personRepository.findById(id)
+                .orElseThrow(() -> new PersonNotFoundException(id));
+
+        return personMapper.toDTO(person);
     }
 }
